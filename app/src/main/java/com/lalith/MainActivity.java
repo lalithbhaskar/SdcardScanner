@@ -117,9 +117,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        if(scanFilesTask != null) {
-                            scanFilesTask.cancel(true);
-                        }
+                        cancelScanning();
                     }
                 });
                 pDialog.show();
@@ -325,10 +323,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if(scanFilesTask != null){
-            // end task right away
-           scanFilesTask.cancel(true);
-        }
+        cancelScanning();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -368,6 +363,17 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void cancelScanning() {
+       if(scanFilesTask != null) {
+           scanFilesTask.cancel(true);
+           pDialog.dismiss();
+           mBuilder.setContentText("Scanning complete")
+                   // Removes the progress bar
+                   .setProgress(0, 0, false);
+           mNotifyManager.notify(2, mBuilder.build());
+       }
     }
 
 }
